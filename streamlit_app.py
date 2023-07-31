@@ -6,13 +6,13 @@ dify_endpoint = "https://api.dify.ai/v1/chat-messages"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
 
-def send_message(text):
+def send_message(text, conversation_id):
     # Create a JSON payload with the input text and other metadata
     payload = {
         "inputs": {"text": text},
         "query": "eh",
         "response_mode": "streaming",
-        "conversation_id": "",
+        "conversation_id": conversation_id,
         "user": ""
     }
 
@@ -45,14 +45,18 @@ def send_message(text):
 # Streamlit interface
 st.title("Dify AI Chat")
 
+# Initialize conversation ID
+conversation_id = ""
+
 # Get user input
 user_input = st.text_input("Enter a message")
 
 # Send user input as a message
 if st.button("Send"):
-    response = send_message(user_input)
+    response = send_message(user_input, conversation_id)
     if response:
         st.write("Response:")
         st.write(response)
+        conversation_id = "45701982-8118-4bc5-8e9b-64562b4555f2"  # Update with the actual conversation ID from the response
     else:
         st.write("No response received")
