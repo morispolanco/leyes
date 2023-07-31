@@ -5,8 +5,6 @@ import requests
 dify_endpoint = "https://api.dify.ai/v1/chat-messages"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
-
-
 def send_message(text):
     # Create a JSON payload with the input text and other metadata
     payload = {
@@ -27,8 +25,13 @@ def send_message(text):
         # Send the request to the Dify AI API
         response = requests.post(dify_endpoint, json=payload, headers=headers)
 
-        # Print the response from the Dify AI API (if there is one)
-        print(response.json())
+        # Get the response from the Dify AI API (if there is one)
+        if response.status_code == 200:
+            response_data = response.json()
+            if "output" in response_data:
+                output_text = response_data["output"]["text"]
+                return output_text
+
     except Exception as e:
         # Print an error message if there was an issue sending the request
         print(f"Error sending message: {e}")
@@ -41,4 +44,9 @@ user_input = st.text_input("Enter a message")
 
 # Send user input as a message
 if st.button("Send"):
-    send_message(user_input)
+    response = send_message(user_input)
+    if response:
+        st.write("Response:")
+        st.write(response)
+    else:
+        st.write("No response received")
