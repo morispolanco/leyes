@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Set up the Dify AI API endpoint and secret key
-dify_endpoint = "https://api.dify.ai/v1/chat-messages"
+dify_endpoint = "https://api.dify.ai/v1/"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
 
