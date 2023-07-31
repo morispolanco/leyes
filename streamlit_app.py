@@ -5,6 +5,7 @@ import requests
 dify_endpoint = "https://api.dify.ai/v1/chat-messages"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
+
 def send_message(text):
     # Create a JSON payload with the input text and other metadata
     payload = {
@@ -31,6 +32,11 @@ def send_message(text):
             if "output" in response_data:
                 output_text = response_data["output"]["text"]
                 return output_text
+            else:
+                print("No output text found in the response")
+        else:
+            print(f"Request failed with status code: {response.status_code}")
+            print(response.text)
 
     except Exception as e:
         # Print an error message if there was an issue sending the request
