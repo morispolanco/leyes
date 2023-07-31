@@ -1,6 +1,5 @@
 import streamlit as st
-import websocket
-import json
+import socketio
 
 # Set up the Dify AI API endpoint and secret key
 dify_endpoint = "https://api.dify.ai/v1/chat-messages"
@@ -11,11 +10,10 @@ secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 conversation_id = ""
 response_received = False
 
-def on_message(ws, message):
+def on_message(data):
     global response_received
-    response_data = json.loads(message)
-    if "output" in response_data:
-        output_text = response_data["output"]["text"]
+    if "output" in data:
+        output_text = data["output"]["text"]
         st.write("Response:")
         st.write(output_text)
         response_received = True
@@ -24,7 +22,17 @@ def send_message(text):
     global conversation_id, response_received
     response_received = False
 
-    # Create a JSON payload with the input text and other metadata
+    # Set up the SocketIO connection
+    sio = socketio.Client()
+
+    @sio.on("message")
+    def handle_message(data):
+        on_message(data)
+
+    # Connect to the SocketIO server
+    sio.connect(dify_endpoint, headers={"Authorization": f"Bearer {secret_key}"})
+
+    # Send the message payload
     payload = {
         "inputs": {"text": text},
         "query": "eh",
@@ -32,23 +40,14 @@ def send_message(text):
         "conversation_id": conversation_id,
         "user": ""
     }
-
-    # Set up the WebSocket connection
-    ws = websocket.WebSocketApp(
-        dify_endpoint,
-        on_message=on_message,
-        header={"Authorization": f"Bearer {secret_key}"}
-    )
-
-    # Send the payload as a message
-    ws.send(json.dumps(payload))
+    sio.emit("message", payload)
 
     # Wait for response
     while not response_received:
-        ws.run_forever()
+        sio.sleep(0.1)
 
-    # Close the WebSocket connection
-    ws.close()
+    # Disconnect from the SocketIO server
+    sio.disconnect()
 
 # Streamlit interface
 st.title("Dify AI Chat")
