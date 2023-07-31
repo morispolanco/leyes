@@ -1,5 +1,5 @@
 import streamlit as st
-import websocket.client as websocket
+import websocket
 import json
 
 # Set up the Dify AI API endpoint and secret key
