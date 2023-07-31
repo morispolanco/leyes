@@ -57,6 +57,6 @@ if st.button("Send"):
     if response:
         st.write("Response:")
         st.write(response)
-        conversation_id = "45701982-8118-4bc5-8e9b-64562b4555f2"  # Update with the actual conversation ID from the response
+        conversation_id = ""  # Update with the actual conversation ID from the response
     else:
         st.write("No response received")
