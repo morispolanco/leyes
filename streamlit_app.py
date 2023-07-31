@@ -6,7 +6,6 @@ dify_endpoint = "https://api.dify.ai/v1/chat-messages"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
 
-
 # Global variables
 conversation_id = ""
 
@@ -18,7 +17,7 @@ def send_message(text):
         "inputs": {"text": text},
         "query": "eh",
         "response_mode": "streaming",
-        "conversation_id": "",
+        "conversation_id": conversation_id,
         "user": ""
     }
 
@@ -33,16 +32,21 @@ def send_message(text):
 
     # Check if the request was successful
     if response.status_code == 200:
-        response_data = response.json()
-        if "output" in response_data:
-            output_text = response_data["output"]["text"]
-            st.write("Response:")
-            st.write(output_text)
+        try:
+            response_data = response.json()
+            if "output" in response_data:
+                output_text = response_data["output"]["text"]
+                st.write("Response:")
+                st.write(output_text)
 
-        # Update the conversation ID for maintaining context
-        conversation_id = response_data.get("conversation_id", "")
+            # Update the conversation ID for maintaining context
+            conversation_id = response_data.get("conversation_id", "")
+        except ValueError:
+            st.write("Error: Invalid JSON response")
+            st.write(response.content.decode())
     else:
-        st.write("Error occurred while sending the message")
+        st.write(f"Error occurred while sending the message: {response.status_code}")
+        st.write(response.content.decode())
 
 # Streamlit interface
 st.title("Dify AI Chat")
