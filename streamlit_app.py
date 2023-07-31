@@ -5,6 +5,8 @@ import requests
 dify_endpoint = "https://api.dify.ai/v1/chat-messages"
 secret_key = "app-OZw6qix4wsjQl4MUTmlpEukZ"
 
+
+
 def send_message(text):
     # Create a JSON payload with the input text and other metadata
     payload = {
@@ -31,5 +33,12 @@ def send_message(text):
         # Print an error message if there was an issue sending the request
         print(f"Error sending message: {e}")
 
+# Streamlit interface
 st.title("Dify AI Chat")
-st.write("Enter a message: ")
+
+# Get user input
+user_input = st.text_input("Enter a message")
+
+# Send user input as a message
+if st.button("Send"):
+    send_message(user_input)
